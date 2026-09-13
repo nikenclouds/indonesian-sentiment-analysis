@@ -1,0 +1,16 @@
+LOGISTIC REGRESSION - SENTIMENT ANALYSIS
+=============================================
+
+Accuracy: 0.8732
+
+CLASSIFICATION REPORT
+=============================================
+              precision    recall  f1-score   support
+
+    negative       0.82      0.83      0.82       687
+     neutral       0.89      0.72      0.80       230
+    positive       0.90      0.93      0.91      1283
+
+    accuracy                           0.87      2200
+   macro avg       0.87      0.82      0.84      2200
+weighted avg       0.87      0.87      0.87      2200

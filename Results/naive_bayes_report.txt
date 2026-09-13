@@ -1,0 +1,16 @@
+NAIVE BAYES - SENTIMENT ANALYSIS
+========================================
+
+Accuracy: 0.83
+
+CLASSIFICATION REPORT
+========================================
+              precision    recall  f1-score   support
+
+    negative       0.75      0.76      0.76       687
+     neutral       0.98      0.43      0.60       230
+    positive       0.85      0.93      0.89      1283
+
+    accuracy                           0.83      2200
+   macro avg       0.86      0.71      0.75      2200
+weighted avg       0.84      0.83      0.82      2200
