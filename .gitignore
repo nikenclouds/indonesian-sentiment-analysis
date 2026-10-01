@@ -235,3 +235,5 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+Data/train_preprocessed.csv
+textsentiment.docx

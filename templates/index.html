@@ -1,0 +1,1407 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>NLPly — Indonesian NLP Pipeline</title>
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        body {
+
+            margin: 0;
+
+            font-family:
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                Arial,
+                sans-serif;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #fff5f8 0%,
+                    #fdebf1 45%,
+                    #fff8fa 100%
+                );
+
+            color: #351d28;
+        }
+
+
+        /* =================================
+           DECORATIVE BACKGROUND
+        ================================= */
+
+        body::before {
+
+            content: "";
+
+            position: fixed;
+
+            width: 280px;
+
+            height: 280px;
+
+            border-radius: 50%;
+
+            background: #f5c8d7;
+
+            opacity: 0.28;
+
+            top: -100px;
+
+            right: -80px;
+
+            z-index: -1;
+        }
+
+
+        body::after {
+
+            content: "";
+
+            position: fixed;
+
+            width: 220px;
+
+            height: 220px;
+
+            border-radius: 50%;
+
+            background: #b83d64;
+
+            opacity: 0.08;
+
+            bottom: -80px;
+
+            left: -60px;
+
+            z-index: -1;
+        }
+
+
+        /* =================================
+           APP CONTAINER
+        ================================= */
+
+        .app {
+
+            width: 94%;
+
+            max-width: 1150px;
+
+            margin: 28px auto 50px;
+        }
+
+
+        /* =================================
+           TOP NAV
+        ================================= */
+
+        .topbar {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            margin-bottom: 20px;
+        }
+
+
+        .brand {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+        }
+
+
+        .brand-icon {
+
+            width: 42px;
+
+            height: 42px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            border-radius: 14px;
+
+            background: #8c2045;
+
+            color: white;
+
+            font-size: 20px;
+
+            font-weight: 800;
+
+            box-shadow:
+                0 8px 18px
+                rgba(140, 32, 69, 0.22);
+        }
+
+
+        .brand-text h1 {
+
+            margin: 0;
+
+            color: #761c3b;
+
+            font-size: 18px;
+
+            font-weight: 800;
+        }
+
+
+        .brand-text p {
+
+            margin: 2px 0 0;
+
+            color: #9c7180;
+
+            font-size: 10px;
+        }
+
+
+        .online-pill {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 6px;
+
+            padding: 7px 12px;
+
+            background: white;
+
+            border: 1px solid #efd9e1;
+
+            border-radius: 20px;
+
+            color: #713047;
+
+            font-size: 10px;
+
+            font-weight: 600;
+
+            box-shadow:
+                0 4px 15px
+                rgba(100, 30, 50, 0.05);
+        }
+
+
+        .online-dot {
+
+            width: 7px;
+
+            height: 7px;
+
+            border-radius: 50%;
+
+            background: #b42e57;
+
+            box-shadow:
+                0 0 0 4px #f8dce5;
+        }
+
+
+        /* =================================
+           HERO
+        ================================= */
+
+        .hero {
+
+            position: relative;
+
+            overflow: hidden;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #7d1d40,
+                    #a92e55
+                );
+
+            border-radius: 25px;
+
+            padding: 30px;
+
+            color: white;
+
+            box-shadow:
+                0 18px 35px
+                rgba(115, 25, 55, 0.20);
+        }
+
+
+        .hero::after {
+
+            content: "NLP";
+
+            position: absolute;
+
+            right: 35px;
+
+            bottom: -30px;
+
+            font-size: 130px;
+
+            font-weight: 900;
+
+            color: white;
+
+            opacity: 0.05;
+        }
+
+
+        .hero h2 {
+
+            margin: 0;
+
+            font-size: 28px;
+
+            letter-spacing: -0.5px;
+        }
+
+
+        .hero p {
+
+            max-width: 620px;
+
+            margin: 8px 0 20px;
+
+            color: #ffeaf0;
+
+            font-size: 13px;
+
+            line-height: 1.6;
+        }
+
+
+        .hero-chips {
+
+            display: flex;
+
+            flex-wrap: wrap;
+
+            gap: 8px;
+        }
+
+
+        .hero-chip {
+
+            padding: 7px 12px;
+
+            background:
+                rgba(255,255,255,0.14);
+
+            border:
+                1px solid
+                rgba(255,255,255,0.15);
+
+            border-radius: 20px;
+
+            font-size: 10px;
+
+            backdrop-filter: blur(5px);
+        }
+
+
+        /* =================================
+           QUICK STATS
+        ================================= */
+
+        .stats {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 12px;
+
+            margin: 18px 0;
+        }
+
+
+        .stat-card {
+
+            background: white;
+
+            border: 1px solid #f0dce3;
+
+            border-radius: 18px;
+
+            padding: 15px;
+
+            box-shadow:
+                0 7px 20px
+                rgba(90, 25, 45, 0.06);
+        }
+
+
+        .stat-label {
+
+            color: #a07483;
+
+            font-size: 10px;
+        }
+
+
+        .stat-value {
+
+            margin-top: 5px;
+
+            color: #7c1d40;
+
+            font-size: 19px;
+
+            font-weight: 800;
+        }
+
+
+        /* =================================
+           INPUT CARD
+        ================================= */
+
+        .card {
+
+            background: white;
+
+            border-radius: 23px;
+
+            padding: 24px;
+
+            border: 1px solid #f0dce3;
+
+            box-shadow:
+                0 8px 25px
+                rgba(90, 25, 45, 0.07);
+        }
+
+
+        .card-header {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            margin-bottom: 15px;
+        }
+
+
+        .card-title {
+
+            margin: 0;
+
+            color: #671b37;
+
+            font-size: 18px;
+
+            font-weight: 800;
+        }
+
+
+        .card-subtitle {
+
+            margin-top: 4px;
+
+            color: #a07483;
+
+            font-size: 10px;
+        }
+
+
+        .step-badge {
+
+            padding: 7px 10px;
+
+            border-radius: 10px;
+
+            background: #fff0f4;
+
+            color: #8b2145;
+
+            font-size: 9px;
+
+            font-weight: 800;
+        }
+
+
+        textarea {
+
+            width: 100%;
+
+            min-height: 135px;
+
+            resize: vertical;
+
+            padding: 16px;
+
+            border:
+                1.5px solid #e7c2ce;
+
+            border-radius: 17px;
+
+            background: #fffafb;
+
+            color: #39232b;
+
+            font-size: 13px;
+
+            line-height: 1.6;
+
+            outline: none;
+
+            font-family:
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                Arial,
+                sans-serif;
+        }
+
+
+        textarea:focus {
+
+            border-color: #8c2045;
+
+            box-shadow:
+                0 0 0 4px
+                rgba(140, 32, 69, 0.07);
+        }
+
+
+        .input-footer {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            margin-top: 13px;
+        }
+
+
+        .hint {
+
+            color: #a67b88;
+
+            font-size: 9px;
+        }
+
+
+        .analyze-btn {
+
+            border: none;
+
+            padding: 12px 21px;
+
+            border-radius: 13px;
+
+            background: #8c2045;
+
+            color: white;
+
+            font-size: 11px;
+
+            font-weight: 800;
+
+            cursor: pointer;
+
+            box-shadow:
+                0 8px 17px
+                rgba(140, 32, 69, 0.20);
+
+            transition: 0.2s;
+        }
+
+
+        .analyze-btn:hover {
+
+            transform:
+                translateY(-2px);
+
+            background: #721936;
+        }
+
+
+        /* =================================
+           PIPELINE HEADER
+        ================================= */
+
+        .pipeline-head {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            margin: 28px 0 15px;
+        }
+
+
+        .pipeline-title {
+
+            color: #671b37;
+
+            font-size: 18px;
+
+            font-weight: 800;
+        }
+
+
+        .pipeline-count {
+
+            color: #a07483;
+
+            font-size: 10px;
+        }
+
+
+        /* =================================
+           PIPELINE CARDS
+        ================================= */
+
+        .pipeline {
+
+            display: grid;
+
+            gap: 10px;
+        }
+
+
+        .pipeline-card {
+
+            display: grid;
+
+            grid-template-columns:
+                55px
+                190px
+                1fr;
+
+            align-items: stretch;
+
+            background: white;
+
+            border: 1px solid #f0dce3;
+
+            border-radius: 17px;
+
+            overflow: hidden;
+
+            box-shadow:
+                0 5px 16px
+                rgba(90, 25, 45, 0.05);
+
+            transition: 0.2s;
+        }
+
+
+        .pipeline-card:hover {
+
+            transform:
+                translateY(-2px);
+
+            box-shadow:
+                0 9px 22px
+                rgba(90, 25, 45, 0.09);
+        }
+
+
+        .number {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            background: #fff0f4;
+
+            color: #8c2045;
+
+            font-size: 16px;
+
+            font-weight: 900;
+        }
+
+
+        .stage {
+
+            padding: 15px;
+
+            display: flex;
+
+            flex-direction: column;
+
+            justify-content: center;
+
+            border-right: 1px solid #f0dce3;
+        }
+
+
+        .stage-name {
+
+            color: #741c3c;
+
+            font-size: 11px;
+
+            font-weight: 800;
+
+            line-height: 1.4;
+        }
+
+
+        .stage-type {
+
+            margin-top: 5px;
+
+            color: #b0808e;
+
+            font-size: 8px;
+
+            text-transform: uppercase;
+
+            letter-spacing: 0.5px;
+        }
+
+
+        .description {
+
+            padding: 13px 16px;
+
+            color: #87636f;
+
+            font-size: 10px;
+
+            line-height: 1.5;
+        }
+
+
+        .output {
+
+            margin-top: 7px;
+
+            padding: 10px;
+
+            border-radius: 10px;
+
+            background: #fff7f9;
+
+            border: 1px solid #f1dfe5;
+
+            color: #5b3040;
+
+            font-family:
+                "SFMono-Regular",
+                Consolas,
+                monospace;
+
+            font-size: 9px;
+
+            line-height: 1.5;
+
+            word-break: break-word;
+
+            white-space: pre-wrap;
+
+            max-height: 130px;
+
+            overflow-y: auto;
+        }
+
+
+        /* =================================
+           TOKEN ID SPECIAL
+        ================================= */
+
+        .token-card {
+
+            border:
+                1px solid #dca8b9;
+        }
+
+
+        .token-card .number {
+
+            background: #8c2045;
+
+            color: white;
+        }
+
+
+        .token-card .output {
+
+            background: #fdf0f4;
+
+            color: #7a2142;
+        }
+
+
+        /* =================================
+           FOOTER
+        ================================= */
+
+        .footer {
+
+            margin-top: 25px;
+
+            text-align: center;
+
+            color: #aa7c8a;
+
+            font-size: 9px;
+        }
+
+
+        .footer strong {
+
+            color: #8c2045;
+        }
+
+
+        /* =================================
+           RESPONSIVE
+        ================================= */
+
+        @media (max-width: 800px) {
+
+            .stats {
+
+                grid-template-columns: 1fr;
+            }
+
+
+            .pipeline-card {
+
+                grid-template-columns:
+                    45px 1fr;
+            }
+
+
+            .description {
+
+                grid-column:
+                    2;
+            }
+
+
+            .output {
+
+                margin-top: 5px;
+            }
+
+
+            .hero h2 {
+
+                font-size: 23px;
+            }
+
+        }
+
+
+        @media (max-width: 550px) {
+
+            .app {
+
+                width: 95%;
+
+                margin-top: 15px;
+            }
+
+
+            .topbar {
+
+                align-items: flex-start;
+            }
+
+
+            .online-pill {
+
+                display: none;
+            }
+
+
+            .hero {
+
+                padding: 23px;
+            }
+
+
+            .hero h2 {
+
+                font-size: 21px;
+            }
+
+
+            .card {
+
+                padding: 17px;
+            }
+
+
+            .input-footer {
+
+                flex-direction: column;
+
+                align-items: stretch;
+
+                gap: 10px;
+            }
+
+
+            .analyze-btn {
+
+                width: 100%;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="app">
+
+
+    <!-- =================================
+         TOP BAR
+    ================================= -->
+
+    <div class="topbar">
+
+        <div class="brand">
+
+            <div class="brand-icon">
+                N
+            </div>
+
+            <div class="brand-text">
+
+                <h1>
+                    NLPly
+                </h1>
+
+                <p>
+                    Indonesian Sentiment Analysis
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="online-pill">
+
+            <span class="online-dot"></span>
+
+            Pipeline Ready
+
+        </div>
+
+    </div>
+
+
+    <!-- =================================
+         HERO
+    ================================= -->
+
+    <div class="hero">
+
+        <h2>
+            Dashboard Analisis Pipeline NLP ✨
+        </h2>
+
+
+        <p>
+            Analisis teks Bahasa Indonesia secara
+            bertahap menggunakan preprocessing
+            Sastrawi dan tokenisasi IndoBERT.
+        </p>
+
+
+        <div class="hero-chips">
+
+            <span class="hero-chip">
+                ⚡ Real-time Processing
+            </span>
+
+            <span class="hero-chip">
+                🧠 Sastrawi
+            </span>
+
+            <span class="hero-chip">
+                🤖 IndoBERT
+            </span>
+
+            <span class="hero-chip">
+                💻 CPU
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <!-- =================================
+         STATS
+    ================================= -->
+
+    <div class="stats">
+
+
+        <div class="stat-card">
+
+            <div class="stat-label">
+                PIPELINE STEPS
+            </div>
+
+            <div class="stat-value">
+                07
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-label">
+                NLP FRAMEWORK
+            </div>
+
+            <div class="stat-value">
+                Sastrawi
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-label">
+                TOKENIZER
+            </div>
+
+            <div class="stat-value">
+                IndoBERT
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+    <!-- =================================
+         INPUT
+    ================================= -->
+
+    <div class="card">
+
+
+        <div class="card-header">
+
+            <div>
+
+                <h3 class="card-title">
+                    Mau analisis teks apa hari ini? 💗
+                </h3>
+
+                <div class="card-subtitle">
+                    Masukkan kalimat Bahasa Indonesia
+                    untuk menjalankan seluruh pipeline.
+                </div>
+
+            </div>
+
+
+            <div class="step-badge">
+                STEP 01
+            </div>
+
+        </div>
+
+
+        <form action="/" method="POST">
+
+
+            <textarea
+                name="text"
+                placeholder="Contoh: Saya sangat senang belajar Natural Language Processing!"
+                required
+            >{{ text }}</textarea>
+
+
+            <div class="input-footer">
+
+                <div class="hint">
+                    💡 Tip: gunakan kalimat lengkap
+                    agar setiap tahap terlihat jelas.
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="analyze-btn"
+                >
+                    🚀 Jalankan Analisis
+                </button>
+
+            </div>
+
+
+        </form>
+
+
+    </div>
+
+
+    <!-- =================================
+         PIPELINE
+    ================================= -->
+
+    {% if text %}
+
+
+    <div class="pipeline-head">
+
+        <div class="pipeline-title">
+            Hasil Pemrosesan ✨
+        </div>
+
+        <div class="pipeline-count">
+            7 tahap • Step-by-Step
+        </div>
+
+    </div>
+
+
+    <div class="pipeline">
+
+
+        <!-- =========================
+             1 RAW TEXT
+        ========================= -->
+
+        <div class="pipeline-card">
+
+            <div class="number">
+                01
+            </div>
+
+
+            <div class="stage">
+
+                <div class="stage-name">
+                    Raw Text
+                </div>
+
+                <div class="stage-type">
+                    Original Input
+                </div>
+
+            </div>
+
+
+            <div class="description">
+
+                Teks asli yang dimasukkan
+                oleh pengguna sebelum
+                mengalami perubahan.
+
+                <div class="output">
+                    {{ text }}
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================
+             2 CASE FOLDING
+        ========================= -->
+
+        <div class="pipeline-card">
+
+            <div class="number">
+                02
+            </div>
+
+
+            <div class="stage">
+
+                <div class="stage-name">
+                    Case Folding
+                </div>
+
+                <div class="stage-type">
+                    Normalization
+                </div>
+
+            </div>
+
+
+            <div class="description">
+
+                Mengubah seluruh huruf
+                menjadi huruf kecil.
+
+                <div class="output">
+                    {{ case_folding }}
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================
+             3 CLEANING
+        ========================= -->
+
+        <div class="pipeline-card">
+
+            <div class="number">
+                03
+            </div>
+
+
+            <div class="stage">
+
+                <div class="stage-name">
+                    Cleaning
+                </div>
+
+                <div class="stage-type">
+                    Regex
+                </div>
+
+            </div>
+
+
+            <div class="description">
+
+                Menghapus karakter khusus,
+                tanda baca, dan simbol
+                yang tidak diperlukan.
+
+                <div class="output">
+                    {{ cleaning }}
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================
+             4 STOPWORD
+        ========================= -->
+
+        <div class="pipeline-card">
+
+            <div class="number">
+                04
+            </div>
+
+
+            <div class="stage">
+
+                <div class="stage-name">
+                    Stopword Removal
+                </div>
+
+                <div class="stage-type">
+                    Sastrawi
+                </div>
+
+            </div>
+
+
+            <div class="description">
+
+                Menghapus kata umum yang
+                dianggap kurang memberikan
+                informasi penting.
+
+                <div class="output">
+                    {{ stopword_removal }}
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================
+             5 STEMMING
+        ========================= -->
+
+        <div class="pipeline-card">
+
+            <div class="number">
+                05
+            </div>
+
+
+            <div class="stage">
+
+                <div class="stage-name">
+                    Stemming
+                </div>
+
+                <div class="stage-type">
+                    Sastrawi
+                </div>
+
+            </div>
+
+
+            <div class="description">
+
+                Mengubah kata berimbuhan
+                menjadi bentuk kata dasar.
+
+                <div class="output">
+                    {{ stemming }}
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================
+             6 TOKENIZATION
+        ========================= -->
+
+        <div class="pipeline-card">
+
+            <div class="number">
+                06
+            </div>
+
+
+            <div class="stage">
+
+                <div class="stage-name">
+                    IndoBERT Tokenization
+                </div>
+
+                <div class="stage-type">
+                    Subword Token
+                </div>
+
+            </div>
+
+
+            <div class="description">
+
+                Memecah teks menjadi token
+                subword menggunakan
+                tokenizer IndoBERT.
+
+                <div class="output">
+                    {{ indobert_tokens }}
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================
+             7 TOKEN IDS
+        ========================= -->
+
+        <div class="pipeline-card token-card">
+
+            <div class="number">
+                07
+            </div>
+
+
+            <div class="stage">
+
+                <div class="stage-name">
+                    IndoBERT Token IDs
+                </div>
+
+                <div class="stage-type">
+                    Numerical Representation
+                </div>
+
+            </div>
+
+
+            <div class="description">
+
+                Mengubah setiap token menjadi
+                ID numerik berdasarkan
+                vocabulary IndoBERT.
+
+                <div class="output">
+                    {{ token_ids }}
+                </div>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+    {% endif %}
+
+
+    <!-- =================================
+         FOOTER
+    ================================= -->
+
+    <div class="footer">
+
+        Built for
+        <strong>Indonesian Sentiment Analysis</strong>
+        • NLP Pipeline
+
+    </div>
+
+
+</div>
+
+
+</body>
+
+</html>
